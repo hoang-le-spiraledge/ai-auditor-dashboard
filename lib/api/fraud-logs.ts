@@ -1,53 +1,42 @@
 // Types
 export interface FraudLog {
   id: string
-  fraudId: string
-  type: string
-  description?: string
-  user: string
-  amount: string
-  savings: string
-  risk: number
-  status: string
-  transactionType?: string
-  jiraTicketNumber?: string
-  ipAddress: string
-  location: string
-  device: string
-  userAgent: string
-  previousAttempts: number
-  cardNumber?: string
-  merchant?: string
-  notes?: string
-  reviewedBy?: string
-  reviewedAt?: string
+  fraudId: string               // maps to transactionid
+  transactionType?: string      // maps to transactiontype
+  description?: string          // description column
+  user: string                  // customer column
+  amount: string                // amount column
+  risk: number                  // risk column
+  status: string                // detectionstatus column
+  jiraTicketNumber?: string     // jiraticketnumber column
+
+  // Optional / legacy fields kept to minimise UI breakage
+  type?: string                 // alias to transactionType for old code
+  savings?: string              // not in DB, may be derived
+  notes?: string                // notes column
+  aiSuggestion?: string         // aiSuggestion column
+
+  // timestamps
   createdAt: string
   updatedAt: string
+  reviewedBy?: string
+  reviewedAt?: string
 }
 
 export interface CreateFraudLogData {
-  type: string
-  description?: string
   user: string
   amount: string
-  savings: string
   risk: number
   status?: string
+  description?: string
+  fraudId?: string            // optional override, else server generates
   transactionType?: string
   jiraTicketNumber?: string
-  ipAddress: string
-  location: string
-  device: string
-  userAgent: string
-  previousAttempts?: number
-  cardNumber?: string
-  merchant?: string
   notes?: string
+  aiSuggestion?: string
 }
 
 export interface UpdateFraudLogData extends Partial<CreateFraudLogData> {
-  transactionType?: string
-  jiraTicketNumber?: string
   reviewedBy?: string
   reviewedAt?: string
 }
@@ -72,6 +61,7 @@ export class FraudLogAPI {
     limit?: number
     status?: string
     type?: string
+    risk?: string
   }): Promise<FraudLogResponse> {
     const searchParams = new URLSearchParams()
     
@@ -79,6 +69,7 @@ export class FraudLogAPI {
     if (params?.limit) searchParams.set('limit', params.limit.toString())
     if (params?.status) searchParams.set('status', params.status)
     if (params?.type) searchParams.set('type', params.type)
+    if (params?.risk) searchParams.set('risk', params.risk)
     
     const url = `${this.baseUrl}?${searchParams.toString()}`
     

@@ -5,8 +5,7 @@ interface FilterOptions {
   status: string;
   type: string;
   user: string;
-  minRisk: string;
-  maxRisk: string;
+  risk: string; // CRITICAL | HIGH | MEDIUM | LOW | ''
   dateFrom: string;
   dateTo: string;
   search: string;
@@ -22,8 +21,7 @@ export default function FraudFilters({ onFiltersChange, initialFilters = {} }: F
     status: initialFilters.status || '',
     type: initialFilters.type || '',
     user: initialFilters.user || '',
-    minRisk: initialFilters.minRisk || '',
-    maxRisk: initialFilters.maxRisk || '',
+    risk: initialFilters.risk || '',
     dateFrom: initialFilters.dateFrom || '',
     dateTo: initialFilters.dateTo || '',
     search: initialFilters.search || ''
@@ -42,8 +40,7 @@ export default function FraudFilters({ onFiltersChange, initialFilters = {} }: F
       status: '',
       type: '',
       user: '',
-      minRisk: '',
-      maxRisk: '',
+      risk: '',
       dateFrom: '',
       dateTo: '',
       search: ''
@@ -166,32 +163,23 @@ export default function FraudFilters({ onFiltersChange, initialFilters = {} }: F
               />
             </div>
 
-            {/* Risk Range */}
+            {/* Risk Level */}
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                Risk Range (%)
+                Risk Level
               </label>
-              <div className="flex gap-2">
-                <input
-                  type="number"
-                  placeholder="Min"
-                  min="0"
-                  max="100"
-                  value={filters.minRisk}
-                  onChange={(e) => handleFilterChange('minRisk', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-                <span className="self-center text-gray-500">-</span>
-                <input
-                  type="number"
-                  placeholder="Max"
-                  min="0"
-                  max="100"
-                  value={filters.maxRisk}
-                  onChange={(e) => handleFilterChange('maxRisk', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-800 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
-              </div>
+              <select
+                value={filters.risk}
+                onChange={(e) => handleFilterChange('risk', e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg dark:border-gray-600 dark:bg-gray-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">All Levels</option>
+                <option value="CRITICAL">CRITICAL</option>
+                <option value="HIGH">HIGH</option>
+                <option value="MEDIUM">MEDIUM</option>
+                <option value="LOW">LOW</option>
+                <option value="INFO">INFO</option>
+              </select>
             </div>
 
             {/* Date Range */}
@@ -224,42 +212,51 @@ export default function FraudFilters({ onFiltersChange, initialFilters = {} }: F
             <div className="flex gap-2">
               <button
                 onClick={() => {
-                  handleFilterChange('minRisk', '0');
-                  handleFilterChange('maxRisk', '30');
+                  handleFilterChange('risk', 'CRITICAL');
                 }}
                 className={`px-3 py-1 text-sm rounded-lg border transition-colors ${
-                  filters.minRisk === '0' && filters.maxRisk === '30'
-                    ? 'bg-green-100 border-green-300 text-green-700 dark:bg-green-900 dark:border-green-700 dark:text-green-300'
-                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
-                }`}
-              >
-                Low Risk (0-30%)
-              </button>
-              <button
-                onClick={() => {
-                  handleFilterChange('minRisk', '31');
-                  handleFilterChange('maxRisk', '70');
-                }}
-                className={`px-3 py-1 text-sm rounded-lg border transition-colors ${
-                  filters.minRisk === '31' && filters.maxRisk === '70'
-                    ? 'bg-yellow-100 border-yellow-300 text-yellow-700 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-300'
-                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
-                }`}
-              >
-                Medium Risk (31-70%)
-              </button>
-              <button
-                onClick={() => {
-                  handleFilterChange('minRisk', '71');
-                  handleFilterChange('maxRisk', '100');
-                }}
-                className={`px-3 py-1 text-sm rounded-lg border transition-colors ${
-                  filters.minRisk === '71' && filters.maxRisk === '100'
+                  filters.risk === 'CRITICAL'
                     ? 'bg-red-100 border-red-300 text-red-700 dark:bg-red-900 dark:border-red-700 dark:text-red-300'
                     : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
                 }`}
               >
-                High Risk (71-100%)
+                CRITICAL
+              </button>
+              <button
+                onClick={() => {
+                  handleFilterChange('risk', 'HIGH');
+                }}
+                className={`px-3 py-1 text-sm rounded-lg border transition-colors ${
+                  filters.risk === 'HIGH'
+                    ? 'bg-yellow-100 border-yellow-300 text-yellow-700 dark:bg-yellow-900 dark:border-yellow-700 dark:text-yellow-300'
+                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
+                }`}
+              >
+                HIGH
+              </button>
+              <button
+                onClick={() => {
+                  handleFilterChange('risk', 'MEDIUM');
+                }}
+                className={`px-3 py-1 text-sm rounded-lg border transition-colors ${
+                  filters.risk === 'MEDIUM'
+                    ? 'bg-blue-100 border-blue-300 text-blue-700 dark:bg-blue-900 dark:border-blue-700 dark:text-blue-300'
+                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
+                }`}
+              >
+                MEDIUM
+              </button>
+              <button
+                onClick={() => {
+                  handleFilterChange('risk', 'LOW');
+                }}
+                className={`px-3 py-1 text-sm rounded-lg border transition-colors ${
+                  filters.risk === 'LOW'
+                    ? 'bg-green-100 border-green-300 text-green-700 dark:bg-green-900 dark:border-green-700 dark:text-green-300'
+                    : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50 dark:bg-gray-800 dark:border-gray-600 dark:text-gray-400 dark:hover:bg-gray-700'
+                }`}
+              >
+                LOW
               </button>
             </div>
           </div>
@@ -306,8 +303,8 @@ export default function FraudFilters({ onFiltersChange, initialFilters = {} }: F
                 if (!value) return null;
                 
                 let displayValue = value;
-                if (key === 'minRisk' || key === 'maxRisk') {
-                  displayValue = `${value}%`;
+                if (key === 'risk') {
+                  displayValue = value;
                 }
                 
                 return (

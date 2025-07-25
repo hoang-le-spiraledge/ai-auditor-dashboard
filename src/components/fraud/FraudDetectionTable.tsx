@@ -44,21 +44,8 @@ function formatFraudLogForDisplay(fraudLog: FraudLog) {
     status: fraudLog.status as "Critical" | "Medium" | "Resolved" | "In Review" | "False Positive",
     transactionType: fraudLog.transactionType || "-",
     jiraTicketNumber: fraudLog.jiraTicketNumber || "",
-    details: {
-      ipAddress: fraudLog.ipAddress,
-      location: fraudLog.location,
-      device: fraudLog.device,
-      userAgent: fraudLog.userAgent,
-      previousAttempts: fraudLog.previousAttempts,
-      transactionDetails: fraudLog.cardNumber ? {
-        cardNumber: fraudLog.cardNumber,
-        merchant: fraudLog.merchant || "Unknown",
-        amount: fraudLog.amount
-      } : undefined
-    },
     notes: fraudLog.notes,
-    reviewedBy: fraudLog.reviewedBy,
-    reviewedAt: fraudLog.reviewedAt
+    aiSuggestion: fraudLog.aiSuggestion,
   };
 }
 
@@ -70,8 +57,7 @@ export default function FraudDetectionTable() {
     status: '',
     type: '',
     user: '',
-    minRisk: '',
-    maxRisk: '',
+    risk: '',
     dateFrom: '',
     dateTo: '',
     search: ''
@@ -82,7 +68,7 @@ export default function FraudDetectionTable() {
     page: currentPage,
     limit: 10,
     ...Object.fromEntries(
-      Object.entries(filters).filter(([_, value]) => value !== '')
+      Object.entries(filters).filter(([, value]) => value !== '')
     ),
   });
   
@@ -143,11 +129,20 @@ export default function FraudDetectionTable() {
     );
   };
 
-  const getRiskColor = (risk: number) => {
-    if (risk >= 90) return "text-red-600";
-    if (risk >= 70) return "text-orange-500";
-    return "text-green-600";
-  };
+  const getRiskColor = (risk: string) => {
+    switch (risk.toUpperCase()) {
+      case 'CRITICAL':
+        return 'text-red-600'
+      case 'HIGH':
+        return 'text-orange-500'
+      case 'MEDIUM':
+        return 'text-yellow-500'
+      case 'LOW':
+        return 'text-green-600'
+      default: // INFO hoặc giá trị khác
+        return 'text-gray-500'
+    }
+  }
 
   // Loading state
   if (loading) {
@@ -224,7 +219,8 @@ export default function FraudDetectionTable() {
             <TableHeader className="border-b border-gray-100 dark:border-white/[0.05]">
               <TableRow>
                 <TableCell isHeader className="px-6 py-4 font-medium text-gray-500 text-start text-sm dark:text-gray-400">
-                  <input type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded" />
+                  {/* <input type="checkbox" className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded" /> */}
+                  ID
                 </TableCell>
                 <TableCell isHeader className="px-6 py-4 font-medium text-gray-500 text-start text-sm dark:text-gray-400">
                   Detection
@@ -241,9 +237,9 @@ export default function FraudDetectionTable() {
                 <TableCell isHeader className="px-6 py-4 font-medium text-gray-500 text-start text-sm dark:text-gray-400">
                   Type
                 </TableCell>
-                <TableCell isHeader className="px-6 py-4 font-medium text-gray-500 text-start text-sm dark:text-gray-400">
+                {/* <TableCell isHeader className="px-6 py-4 font-medium text-gray-500 text-start text-sm dark:text-gray-400">
                   Risk
-                </TableCell>
+                </TableCell> */}
                 <TableCell isHeader className="px-6 py-4 font-medium text-gray-500 text-start text-sm dark:text-gray-400">
                   Action
                 </TableCell>
@@ -268,7 +264,7 @@ export default function FraudDetectionTable() {
                         {detection.type}
                       </span>
                       <div className="flex items-center gap-2">
-                        {renderStatusBadge(detection.status)}
+                        {renderStatusBadge(detection.description)}
                         <span className="text-sm text-gray-500 dark:text-gray-400">
                           {detection.timeAgo}
                         </span>
@@ -310,16 +306,16 @@ export default function FraudDetectionTable() {
                     </div>
                   </TableCell>
 
-                  <TableCell className="px-6 py-4">
+                  {/* <TableCell className="px-6 py-4">
                     {renderStatusBadge(detection.status)}
-                  </TableCell>
+                  </TableCell> */}
 
                   <TableCell className="px-6 py-4">
                     <div className="flex items-center gap-2">
-                      <span className={`font-medium ${getRiskColor(detection.risk)}`}>
-                        {detection.risk}%
+                      <span className={`font-medium ${getRiskColor(detection.risk as unknown as string)}`}>
+                        {detection.risk}
                       </span>
-                      <span className="text-sm text-gray-500">Risk</span>
+                      {/* <span className="text-sm text-gray-500">Risk</span> */}
                     </div>
                   </TableCell>
 

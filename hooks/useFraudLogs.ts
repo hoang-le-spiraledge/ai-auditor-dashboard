@@ -7,6 +7,7 @@ export function useFraudLogs(params?: {
   limit?: number
   status?: string
   type?: string
+  risk?: string
 }) {
   const [data, setData] = useState<FraudLogResponse | null>(null)
   const [loading, setLoading] = useState(true)
@@ -158,21 +159,35 @@ export function useFraudMetrics() {
       
       const fraudLogs = response.data;
       
-      // Calculate metrics
+      // ---------- Metrics ----------
       const totalDetections = fraudLogs.length;
-      const criticalIssues = fraudLogs.filter(log => log.status === 'Critical').length;
-      
-      // Calculate total savings (remove currency symbols and commas)
+
+      // Map textual risk -> numeric scale for calculations and colouring
+      const riskScale: Record<string, number> = {
+        'CRITICAL': 100,
+        'HIGH': 80,
+        'MEDIUM': 60,
+        'LOW': 30,
+        'INFO': 10,
+      };
+
+      // critical defined by risk == CRITICAL (case-insensitive)
+      const criticalIssues = fraudLogs.filter(log => (log.risk as any)?.toString().toUpperCase() === 'CRITICAL').length;
+
+      // totalSavings: use amount field or savings if present
       const totalSavings = fraudLogs.reduce((sum, log) => {
-        const savingsAmount = parseFloat(log.savings.replace(/[$,]/g, ''));
+        const raw = (log as any).savings ?? log.amount ?? 0;
+        const savingsAmount = parseFloat(raw.toString().replace(/[$,]/g, ''));
         return sum + (isNaN(savingsAmount) ? 0 : savingsAmount);
       }, 0);
-      
-      // Calculate average risk
-      const averageRisk = fraudLogs.length > 0 
-        ? Math.round(fraudLogs.reduce((sum, log) => sum + log.risk, 0) / fraudLogs.length)
-        : 0;
 
+      // averageRisk numeric
+      const riskValues = fraudLogs.map(l => {
+        const key = (l.risk as any)?.toString().toUpperCase();
+        return Number.isFinite(l.risk as any) ? (l.risk as unknown as number) : (riskScale[key] ?? 0);
+      });
+      const averageRisk = riskValues.length ? Math.round(riskValues.reduce((a,b)=>a+b,0)/riskValues.length) : NaN;
+       
       setMetrics({
         totalDetections,
         criticalIssues,

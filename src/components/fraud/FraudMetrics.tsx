@@ -115,12 +115,16 @@ export const FraudMetrics = () => {
             <span className="text-sm text-gray-500 dark:text-gray-400">
               Average Risk
             </span>
-            <h4 className={`mt-2 font-bold text-3xl ${
-              metrics.averageRisk >= 80 ? 'text-red-600' : 
-              metrics.averageRisk >= 60 ? 'text-orange-500' : 
-              'text-green-600'
-            }`}>
-              {metrics.averageRisk}%
+            <h4 className={
+              isFinite(metrics.averageRisk)
+                ? `mt-2 font-bold text-3xl ${
+                    metrics.averageRisk >= 80 ? 'text-red-600' :
+                    metrics.averageRisk >= 60 ? 'text-orange-500' :
+                    metrics.averageRisk >= 40 ? 'text-yellow-500' : 'text-green-600'
+                  }`
+                : 'mt-2 font-bold text-green-600 text-3xl'
+            }>
+              {isFinite(metrics.averageRisk) ? metrics.averageRisk + '%' : 'N/A'}
             </h4>
             <span className="text-xs text-gray-500 dark:text-gray-400 mt-1">
               Risk assessment score

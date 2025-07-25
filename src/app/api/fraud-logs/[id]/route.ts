@@ -8,8 +8,9 @@ export async function GET(
 ) {
   try {
     const { id } = await params
+    const numericId = Number(id)
     const fraudLog = await prisma.fraudLog.findUnique({
-      where: { id }
+      where: { id: numericId }
     })
     
     if (!fraudLog) {
@@ -38,30 +39,19 @@ export async function PUT(
     const { id } = await params
     const body = await request.json()
     
+    const numericId = Number(id)
     const fraudLog = await prisma.fraudLog.update({
-      where: { id },
+      where: { id: numericId },
       data: {
-        type: body.type,
         description: body.description,
         user: body.user,
         amount: body.amount,
-        savings: body.savings,
         risk: body.risk,
         status: body.status,
-        ipAddress: body.ipAddress,
-        location: body.location,
-        device: body.device,
-        userAgent: body.userAgent,
-        previousAttempts: body.previousAttempts,
-        cardNumber: body.cardNumber,
-        merchant: body.merchant,
-        notes: body.notes,
-        // @ts-ignore will exist after regeneration
         transactionType: body.transactionType,
-        // @ts-ignore
-        jiraTicketNumber: body.jiraTicketNumber,
-        reviewedBy: body.reviewedBy,
-        reviewedAt: body.reviewedAt ? new Date(body.reviewedAt) : null,
+        notes: body.notes,
+        // reviewedBy: body.reviewedBy,
+        // reviewedAt: body.reviewedAt ? new Date(body.reviewedAt) : null,
       }
     })
     
@@ -82,8 +72,9 @@ export async function DELETE(
 ) {
   try {
     const { id } = await params
+    const numericId = Number(id)
     await prisma.fraudLog.delete({
-      where: { id }
+      where: { id: numericId }
     })
     
     return NextResponse.json({ message: 'Fraud log deleted successfully' })

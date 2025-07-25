@@ -1,61 +1,31 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "mongodb"
+  provider = "sqlserver"
   url      = env("DATABASE_URL")
 }
 
 model FraudLog {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  fraudId     String   @unique // Custom fraud ID like "AUD-978"
-  type        String   // e.g., "Device fingerprint mismatch"
-  description String?  // e.g., "Critical", "Medium"
-  user        String   // Username associated with the fraud
-  amount      String   // Amount involved (stored as string for formatting)
-  savings     String   // Potential savings amount
-  risk        Int      // Risk percentage (0-100)
-  status      String   // "Critical", "Medium", "Resolved", "In Review", "False Positive"
-  
-  // Session details
-  ipAddress        String
-  location         String
-  device           String
-  userAgent        String
-  previousAttempts Int    @default(0)
-  
-  // Transaction details (optional)
-  cardNumber String?
-  merchant   String?
+  id               Int      @id @default(autoincrement()) @map("id")
 
-  // New fields
-  transactionType String? // refund, discount, etc.
-  jiraTicketNumber String? // TEND-XXXXX link to Jira
-  
-  // Timestamps
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  // Additional fields for investigation
-  notes     String?  // Investigation notes
-  reviewedBy String? // Who reviewed this fraud case
-  reviewedAt DateTime?
-  
-  @@map("fraud_logs")
+  fraudId          String?  @map("transaction_id")     @db.VarChar(100)
+  transactionType  String?  @map("transaction_type")   @db.VarChar(50)
+  description      String?  @map("description")        @db.Text
+  user             String?  @map("customer_name")      @db.VarChar(255)
+  amount           Decimal?  @map("amount")             @db.Decimal(12,2)
+  risk             String?  @map("risk_level")         @db.VarChar(50)
+  status           String?  @map("detection_status")   @db.VarChar(50)
+  jiraTicketNumber String?  @map("jira_ticket_number") @db.VarChar(50)
+  createdAt        DateTime @map("created_at")         @db.DateTime
+  updatedAt        DateTime @map("updated_at")         @db.DateTime
+  notes            String?  @map("notes")              @db.Text
+  aiSuggestion     String?  @map("ai_suggestion")      @db.Text
+
+  @@index([jiraTicketNumber], map: "IX_AQT_AI_AUDITOR_TRACK_jira_ticket_number")
+  @@index([fraudId, transactionType, status], map: "IX_AQT_AI_AUDITOR_TRACK_transaction_id")
+
+  @@map("AQT_AI_AUDITOR_TRACK")
 }
-
-model User {
-  id       String @id @default(auto()) @map("_id") @db.ObjectId
-  username String @unique
-  email    String @unique
-  role     String @default("analyst") // analyst, admin, etc.
-  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  
-  @@map("users")
-} 

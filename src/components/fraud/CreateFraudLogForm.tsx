@@ -11,22 +11,13 @@ interface CreateFraudLogFormProps {
 export default function CreateFraudLogForm({ onSuccess, onCancel }: CreateFraudLogFormProps) {
   const { createFraudLog, loading, error } = useFraudLogActions();
   const [formData, setFormData] = useState<CreateFraudLogData>({
-    type: "",
+    user: "",
+    amount: "",
+    risk: 50,
+    status: "In Review",
     description: "Medium",
     transactionType: "",
     jiraTicketNumber: "",
-    user: "",
-    amount: "",
-    savings: "",
-    risk: 50,
-    status: "In Review",
-    ipAddress: "",
-    location: "",
-    device: "",
-    userAgent: "",
-    previousAttempts: 0,
-    cardNumber: "",
-    merchant: "",
     notes: "",
   });
 
@@ -62,18 +53,17 @@ export default function CreateFraudLogForm({ onSuccess, onCancel }: CreateFraudL
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Basic Information */}
+          {/* Description */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Fraud Type *
+              Description
             </label>
             <input
               type="text"
-              name="type"
-              value={formData.type}
+              name="description"
+              value={formData.description ?? ""}
               onChange={handleChange}
-              required
-              placeholder="e.g., Device fingerprint mismatch"
+              placeholder="e.g., Medium risk refund"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
             />
           </div>
@@ -161,113 +151,10 @@ export default function CreateFraudLogForm({ onSuccess, onCancel }: CreateFraudL
             />
           </div>
 
+          {/* Jira Ticket */}
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Potential Savings
-            </label>
-            <input
-              type="text"
-              name="savings"
-              value={formData.savings}
-              onChange={handleChange}
-              placeholder="Save $200"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          {/* Session Information */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              IP Address *
-            </label>
-            <input
-              type="text"
-              name="ipAddress"
-              value={formData.ipAddress}
-              onChange={handleChange}
-              required
-              placeholder="192.168.1.100"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Location *
-            </label>
-            <input
-              type="text"
-              name="location"
-              value={formData.location}
-              onChange={handleChange}
-              required
-              placeholder="New York, NY, USA"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Device *
-            </label>
-            <input
-              type="text"
-              name="device"
-              value={formData.device}
-              onChange={handleChange}
-              required
-              placeholder="iPhone 14 Pro"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Previous Attempts
-            </label>
-            <input
-              type="number"
-              name="previousAttempts"
-              value={formData.previousAttempts}
-              onChange={handleChange}
-              min="0"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          {/* Transaction Details */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Card Number
-            </label>
-            <input
-              type="text"
-              name="cardNumber"
-              value={formData.cardNumber}
-              onChange={handleChange}
-              placeholder="**** **** **** 1234"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Merchant
-            </label>
-            <input
-              type="text"
-              name="merchant"
-              value={formData.merchant}
-              onChange={handleChange}
-              placeholder="Amazon.com"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-            />
-          </div>
-
-          {/* Jira Ticket Number */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-              Jira Ticket Number (TEND-XXXXX)
+              Jira Ticket
             </label>
             <input
               type="text"
@@ -288,28 +175,25 @@ export default function CreateFraudLogForm({ onSuccess, onCancel }: CreateFraudL
           <input
             type="text"
             name="userAgent"
-            value={formData.userAgent}
-            onChange={handleChange}
-            required
-            placeholder="Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X)"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-          />
+            onChange={() => {}}
+            placeholder="(deprecated)"
+            className="hidden" />
         </div>
 
         {/* Notes */}
-        <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-            Notes
-          </label>
-          <textarea
-            name="notes"
-            value={formData.notes}
-            onChange={handleChange}
-            rows={3}
-            placeholder="Additional investigation notes..."
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
-          />
-        </div>
+        <div className="md:col-span-2">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+              Notes / AI Suggestion
+            </label>
+            <textarea
+              name="notes"
+              value={formData.notes}
+              onChange={handleChange}
+              rows={3}
+              placeholder="Add notes or AI suggestion"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            ></textarea>
+          </div>
 
         {/* Submit Buttons */}
         <div className="flex items-center justify-end gap-3 pt-4">

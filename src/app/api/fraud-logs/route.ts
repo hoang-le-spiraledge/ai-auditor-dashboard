@@ -10,8 +10,7 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get('status')
     const type = searchParams.get('type')
     const user = searchParams.get('user')
-    const minRisk = searchParams.get('minRisk')
-    const maxRisk = searchParams.get('maxRisk')
+    const riskLevel = searchParams.get('risk')
     const dateFrom = searchParams.get('dateFrom')
     const dateTo = searchParams.get('dateTo')
     const search = searchParams.get('search')
@@ -30,12 +29,8 @@ export async function GET(request: NextRequest) {
     // User filter (case insensitive)
     if (user) where.user = { contains: user, mode: 'insensitive' }
     
-    // Risk range filter
-    if (minRisk || maxRisk) {
-      where.risk = {}
-      if (minRisk) where.risk.gte = parseInt(minRisk)
-      if (maxRisk) where.risk.lte = parseInt(maxRisk)
-    }
+    // Risk level filter (CRITICAL/HIGH/...)
+    if (riskLevel) where.risk_level = riskLevel
     
     // Date range filter
     if (dateFrom || dateTo) {
@@ -97,25 +92,17 @@ export async function POST(request: NextRequest) {
     const fraudLog = await prisma.fraudLog.create({
       data: {
         fraudId,
-        type: body.type,
         description: body.description,
         user: body.user,
         amount: body.amount,
-        savings: body.savings,
         risk: body.risk,
         status: body.status || 'In Review',
-        ipAddress: body.ipAddress,
-        location: body.location,
-        device: body.device,
-        userAgent: body.userAgent,
-        previousAttempts: body.previousAttempts || 0,
-        cardNumber: body.cardNumber,
-        merchant: body.merchant,
-        notes: body.notes,
-        // @ts-ignore - field will exist after prisma client regeneration
         transactionType: body.transactionType,
-        // @ts-ignore - field will exist after prisma client regeneration
         jiraTicketNumber: body.jiraTicketNumber,
+        notes: body.notes,
+        aiSuggestion: body.aiSuggestion,
+        createdAt: new Date(),
+        updatedAt: new Date(),
       }
     })
     
