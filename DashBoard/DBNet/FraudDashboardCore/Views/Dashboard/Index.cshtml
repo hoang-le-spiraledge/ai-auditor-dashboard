@@ -1,0 +1,74 @@
+@model IEnumerable<FraudDashboardCore.Models.FraudLog>
+@{
+    ViewBag.Title = "Fraud Dashboard";
+    dynamic m = ViewBag.Metrics;
+    int totalDetections = m.totalDetections;
+    int criticalIssues = m.criticalIssues;
+    decimal totalSavings = m.totalSavings;
+    int averageRisk = m.averageRisk;
+
+    string FormatCurrency(decimal amount) => string.Format(System.Globalization.CultureInfo.GetCultureInfo("en-US"), "{0:C0}", amount);
+}
+
+<h2 class="mb-4">Fraud Detection Overview</h2>
+
+<div class="row g-4 mb-5">
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Total Detections</p>
+                <h3 class="fw-bold">@totalDetections.ToString("N0")</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Critical Issues (&gt;= 80% risk)</p>
+                <h3 class="fw-bold text-danger">@criticalIssues.ToString("N0")</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Potential Savings</p>
+                <h3 class="fw-bold text-success">@FormatCurrency(totalSavings)</h3>
+            </div>
+        </div>
+    </div>
+    <div class="col-6 col-lg-3">
+        <div class="card border-0 shadow-sm h-100">
+            <div class="card-body">
+                <p class="text-muted mb-1">Average Risk</p>
+                <h3 class="fw-bold">@averageRisk% </h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h3 class="mb-3">Detection Logs</h3>
+<table class="table table-striped table-hover">
+    <thead class="table-light">
+        <tr>
+            <th>Fraud ID</th>
+            <th>Type</th>
+            <th>User</th>
+            <th>Risk</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var log in Model)
+    {
+        var riskClass = log.Risk >= 80 ? "text-danger fw-bold" : log.Risk >= 60 ? "text-warning fw-bold" : "";
+        <tr>
+            <td>@log.FraudId</td>
+            <td>@log.Type</td>
+            <td>@log.User</td>
+            <td class="@riskClass">@log.Risk %</td>
+            <td>@log.Status</td>
+        </tr>
+    }
+    </tbody>
+</table> 

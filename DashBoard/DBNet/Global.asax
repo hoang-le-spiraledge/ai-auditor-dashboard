@@ -1,0 +1,1 @@
+<%@ Application Codebehind="Global.asax.cs" Inherits="DashBoard.DBNet.Global" Language="C#" %> 

@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model FraudLog {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  fraudId     String   @unique // Custom fraud ID like "AUD-978"
+  type        String   // e.g., "Device fingerprint mismatch"
+  description String?  // e.g., "Critical", "Medium"
+  user        String   // Username associated with the fraud
+  amount      String   // Amount involved (stored as string for formatting)
+  savings     String   // Potential savings amount
+  risk        Int      // Risk percentage (0-100)
+  status      String   // "Critical", "Medium", "Resolved", "In Review", "False Positive"
+  
+  // Session details
+  ipAddress        String
+  location         String
+  device           String
+  userAgent        String
+  previousAttempts Int    @default(0)
+  
+  // Transaction details (optional)
+  cardNumber String?
+  merchant   String?
+
+  // New fields
+  transactionType String? // refund, discount, etc.
+  jiraTicketNumber String? // TEND-XXXXX link to Jira
+  
+  // Timestamps
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  // Additional fields for investigation
+  notes     String?  // Investigation notes
+  reviewedBy String? // Who reviewed this fraud case
+  reviewedAt DateTime?
+  
+  @@map("fraud_logs")
+}
+
+model User {
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
+  username String @unique
+  email    String @unique
+  role     String @default("analyst") // analyst, admin, etc.
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@map("users")
+} 

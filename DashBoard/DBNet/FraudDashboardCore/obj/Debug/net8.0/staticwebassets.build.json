@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "oJ2bYREGm1zfeqkjzC7d38QJXf8R2dC23djbxQDws2k=",
+  "Source": "FraudDashboardCore",
+  "BasePath": "_content/FraudDashboardCore",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}

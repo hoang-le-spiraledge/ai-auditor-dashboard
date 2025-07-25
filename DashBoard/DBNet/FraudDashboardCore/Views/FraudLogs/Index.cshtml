@@ -1,0 +1,27 @@
+@model IEnumerable<FraudDashboardCore.Models.FraudLog>
+
+<h2>Fraud Logs</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Fraud ID</th>
+            <th>Type</th>
+            <th>User</th>
+            <th>Risk</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var log in Model)
+    {
+        <tr>
+            <td>@log.FraudId</td>
+            <td>@log.Type</td>
+            <td>@log.User</td>
+            <td>@log.Risk</td>
+            <td>@log.Status</td>
+        </tr>
+    }
+    </tbody>
+</table> 

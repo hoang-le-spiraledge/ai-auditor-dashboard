@@ -1,0 +1,48 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/le-minh-hoang/Working/AIcontest/zp_ai_auditor/dashboard/DashBoard/DBNet/FraudDashboard.csproj": {}
+  },
+  "projects": {
+    "/home/le-minh-hoang/Working/AIcontest/zp_ai_auditor/dashboard/DashBoard/DBNet/FraudDashboard.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/le-minh-hoang/Working/AIcontest/zp_ai_auditor/dashboard/DashBoard/DBNet/FraudDashboard.csproj",
+        "projectName": "DashBoard.DBNet",
+        "projectPath": "/home/le-minh-hoang/Working/AIcontest/zp_ai_auditor/dashboard/DashBoard/DBNet/FraudDashboard.csproj",
+        "packagesPath": "/home/le-minh-hoang/.nuget/packages/",
+        "outputPath": "/home/le-minh-hoang/Working/AIcontest/zp_ai_auditor/dashboard/DashBoard/DBNet/obj/",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "configFilePaths": [
+          "/home/le-minh-hoang/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net48"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net48": {
+            "projectReferences": {}
+          }
+        }
+      },
+      "frameworks": {
+        "net48": {
+          "dependencies": {
+            "EntityFramework": {
+              "target": "Package",
+              "version": "[6.4.4, )"
+            },
+            "Newtonsoft.Json": {
+              "target": "Package",
+              "version": "[13.0.3, )"
+            }
+          }
+        }
+      }
+    }
+  }
+}
